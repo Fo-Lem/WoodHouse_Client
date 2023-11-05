@@ -11,6 +11,7 @@ import type { address, user } from '../../controllers/orderController'
 import { checkout } from '../../controllers/orderController'
 
 interface State {
+  isFetching: boolean
   address: address
   user: user
   orderSchema: any
@@ -45,6 +46,7 @@ export default defineComponent({
   },
   data(): State {
     return {
+      isFetching: false,
       address: {
         city: 'Ростов-на-Дону',
         street: 'Садовая',
@@ -111,6 +113,9 @@ export default defineComponent({
       return `${import.meta.env.VITE_BASE_URL}${this.catalog.items[id].img_path}/${this.catalog.items[id].art}_0.jpg`
     },
     async checkout() {
+      if (this.isFetching)
+        return
+      this.isFetching = true
       if (await checkout(this.catalog, this.basket, this.user, this.address))
         this.$emit('updateBasket')
     },
